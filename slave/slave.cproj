@@ -126,6 +126,12 @@
     <Compile Include="lib\lcd.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="lib\util.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\util.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
