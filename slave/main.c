@@ -5,41 +5,63 @@
  * Authors : Vili Huusko, Jani Heinikoski, Konsta Keski-Mattinen
  */ 
 
-#define F_CPU 16000000UL
+#include "main.h"
 
-#include <avr/io.h>
-#include <util/delay.h>
-#include "./lib/util.h" 
+#define CONN_POLL_TIME 10
 
-int
-main(void)
-{
-	char c_char[2];
-	int buzzer = 0;
-	DDRD |= (1 << DDD2);
-	int c = 10;
-	while(1)
-	{
-		_delay_ms(1000);
-		itoa(c, c_char, 10);
-		write_lcd("moi", c_char);
-		if (c > 0)
-		{
-			c--;
-		}
-		else {
-			buzzer = !buzzer;
-			if (!buzzer)
-			{
-				PORTD |= (1 << PD2);
-			}
-			else
-			{
-				PORTD &= ~(1 << PD2);
-			}
-		}
-	}
-	
+volatile int state;
+
+int main(void) {
+	setup_slave();
+//	loop_slave();
 	return 0;
 }
+
+void setup_slave() {
+	// initialize state
+	state = AWAITING_CONNECTION;
+	write_lcd("Awaiting", "Connection...");
+	_delay_ms(CONN_POLL_TIME * 1000);
+	if (state == AWAITING_CONNECTION) {
+		state = ERROR;
+		write_lcd("Connection", "timed out");
+	}
+	else {
+		state = READY;
+		write_lcd("OK", "");
+	}
+}
+
+/*void loop_slave() {
+	while (1) {
+		switch(state) {
+			case AWAITING_CONNECTION:
+				write_lcd("Awaiting", "Connection...");
+				break;
+			case ERROR:
+				break;
+			default:
+				state = ERROR;
+				break;
+		}
+	}
+}*/
+
+/*
+char c_char[2];
+int c = 10;
+while(1)
+{
+	_delay_ms(1000);
+	itoa(c, c_char, 10);
+	write_lcd("moi", c_char);
+	if (c > 0)
+	{
+		c--;
+	}
+	else {
+		//play_sound(1000);
+	}
+}
+*/
 

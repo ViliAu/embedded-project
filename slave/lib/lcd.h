@@ -164,7 +164,7 @@
 #define LCD_RW_PORT      PORTB     /**< port for RW line         */
 #endif
 #ifndef LCD_RW_PIN
-#define LCD_RW_PIN       2            /**< pin  for RW line         */
+#define LCD_RW_PIN       2            /**< pin  for RW line         vilin johto */
 #endif
 #ifndef LCD_E_PORT
 #define LCD_E_PORT       PORTB     /**< port for Enable line     */

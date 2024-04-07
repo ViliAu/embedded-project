@@ -9,6 +9,7 @@
 #ifndef UTIL_H_
 #define UTIL_H_
 	
+	extern void initialize_lcd();
 	extern void write_lcd(char* l1, char* l2);
 
 #endif /* UTIL_H_ */
