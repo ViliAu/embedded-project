@@ -7,9 +7,9 @@
 
 #include "buzzer.h"
 
-#define buzzer_DD DDRD
-#define buzzer_PORT PORTD
-#define buzzer_PIN 2
+#define buzzer_DD DDRB
+#define buzzer_PORT PORTB
+#define buzzer_PIN 1
 
 int setup = 0;
 
