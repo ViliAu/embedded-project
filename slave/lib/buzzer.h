@@ -9,7 +9,7 @@
 #ifndef BUZZER_H_
 #define BUZZER_H_
 	
-	#define __DELAY_BACKWARD_COMPATIBLE__
+	#define __DELAY_BACKWARD_COMPATIBLE__ // Allows for variable sound play duration
 	#define F_CPU 16000000UL
 	
 	#include <avr/io.h>

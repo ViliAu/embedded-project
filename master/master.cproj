@@ -162,6 +162,12 @@
     <Compile Include="lib\keypad.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="lib\sensor.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\sensor.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="lib\stdutils.h">
       <SubType>compile</SubType>
     </Compile>
