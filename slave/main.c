@@ -12,7 +12,18 @@
 volatile int state;
 
 int main(void) {
-	setup_slave();
+	// enable global interrupts
+	sei();
+	char msg[BYTES_IN_PACKET];
+	setup_slave_spi();
+	
+	while (1) {
+		while (!is_new_message()){}
+		digest_message(msg);
+		write_lcd(msg, "testi");
+	}
+	
+	//setup_slave();
 //	loop_slave();
 	return 0;
 }

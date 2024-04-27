@@ -132,6 +132,12 @@
     <Compile Include="lib\lcd.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="lib\slave_spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\slave_spi.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="lib\util.c">
       <SubType>compile</SubType>
     </Compile>

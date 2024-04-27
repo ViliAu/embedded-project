@@ -12,11 +12,13 @@
 	#define F_CPU 16000000UL
 
 	#include <avr/io.h>
+	#include <avr/interrupt.h>
 	#include <util/delay.h>
 	#include <stdlib.h>
 	#include <time.h>
 	#include "./lib/util.h"
 	#include "./lib/buzzer.h"
+	#include "./lib/slave_spi.h"
 	
 	// Define states
 	#define AWAITING_CONNECTION 0
