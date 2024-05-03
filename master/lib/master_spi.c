@@ -24,7 +24,7 @@ void setup_master_spi() {
 	}
 }
 
-void assemble_package(uint8_t first_byte, char* param1, char* param2, Packet* package) {
+void assemble_packet(uint8_t first_byte, char* param1, char* param2, Packet* package) {
 	package->first_byte = first_byte;
 	for (uint8_t i = 0; i < (BYTES_IN_PACKET - 1) / 2; i++) {
 		package->param1[i] = (unsigned char) param1[i];

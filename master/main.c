@@ -15,7 +15,7 @@
 int g_switch = 0;
 
 void random_packet(Packet* p) {
-	assemble_package('k', "  moikka\0", "  maailma\0", p);
+	assemble_packet('k', "  moikka\0", "  maailma\0", p);
 	
 	if (g_switch == 0) {
 		g_switch = 1;

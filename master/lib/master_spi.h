@@ -28,6 +28,6 @@
 	void setup_master_spi();
 	
 	extern bool send_packet_to_slave(Packet* packet);
-	extern void assemble_package(uint8_t first_byte, char* param1, char* param2, Packet* package);
+	extern void assemble_packet(uint8_t first_byte, char* param1, char* param2, Packet* package);
 
 #endif /* MASTER_SPI_H_ */
