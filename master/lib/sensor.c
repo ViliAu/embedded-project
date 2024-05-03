@@ -7,20 +7,19 @@
 
 #include "sensor.h"
 
-#define sensor_DD DDRL // data direction
 #define sensor_PORT PORTL // port
-#define trig_PIN 2 // pin for transmitting
-#define echo_PIN 3 // pin for receiving
+#define trig_PIN 1 // pin for transmitting
+#define echo_PIN 0 // pin for receiving
 
 #define HIGH 1
 #define LOW 0
 
-#define AIR_SPEED 34600 // CM/S
+#define AIR_SPEED 34300 // CM/S
 #define TOLERANCE 10 // How many cm the signal has to be disturbed in order to trigger the alarm
 
 int setup_done = 0;
 
-double base_distance = 0; // Baseline for tolerance check
+int base_distance = 0; // Baseline for tolerance check
 
 void setup() {
 	if (setup_done == 0) {
@@ -41,7 +40,7 @@ void set_pin(int pin, int state) {
 }
 
 int read_pin_digital(int pin) {
-	return ((PORTL & (1 << pin)) == (1 << pin));
+	return (PINL & (1 << pin)) == (1 << pin) ;
 }
 
 void transmit() {
@@ -50,23 +49,22 @@ void transmit() {
 	set_pin(trig_PIN, LOW);
 }
 
-double get_reading() {
+int get_reading() {
 	setup();
-	
+	int loops = 0;
 	// Wait for previous pulse
-	while (read_pin_digital(echo_PIN) == 1);
+	while (read_pin_digital(echo_PIN) == 1) {};
 	
-	long loops = 0;
-	double distance = 0;
+	int distance = 0;
 	transmit();
 	
 	// Wait for the echo pin to become HIGH
-	while (read_pin_digital(echo_PIN) == 0);
+	while (read_pin_digital(echo_PIN) == 0){};
 	while (read_pin_digital(echo_PIN) == 1) {
 		loops++;
 	}
 	// Calculate duration
-	distance = loops / F_CPU * AIR_SPEED / 2;
+	distance = (double)loops / 800000 * AIR_SPEED / 2; // 800000 clock speed
 	return distance;
 }
 
@@ -75,6 +73,6 @@ void set_base_distance() {
 }
 
 int check_motion() {
-	const double dist = get_reading();
+	const int dist = get_reading();
 	return (dist < base_distance - TOLERANCE / 2 || dist > base_distance + TOLERANCE / 2);
 }

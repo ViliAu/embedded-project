@@ -168,6 +168,12 @@
     <Compile Include="lib\master_spi.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="lib\password_storage.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\password_storage.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="lib\sensor.c">
       <SubType>compile</SubType>
     </Compile>
@@ -178,6 +184,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="main.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

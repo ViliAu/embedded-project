@@ -18,7 +18,7 @@
 	void set_pin(int pin, int state);
 	int read_pin_digital(int pin);
 	void transmit();
-	double get_reading();
+	int get_reading();
 	void set_base_distance();
 	int check_motion();
 
