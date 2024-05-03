@@ -10,11 +10,9 @@
 
 int g_setup = 0;
 
-// global variables for storing data used in SPI communication
-unsigned char g_spi_send_data[BYTES_IN_PACKET] = "acknowledge\0";
-unsigned char g_spi_receive_data[BYTES_IN_PACKET];
 volatile bool g_is_transfer_complete = 0;
 volatile uint8_t g_spi_byte_index = 0;
+volatile Packet g_packet;
 
 void setup_slave_spi() {
 	if (g_setup == 0) {
@@ -27,7 +25,9 @@ void setup_slave_spi() {
 }
 
 void on_transfer_success() {
+	/* mark packet transfer as completed */
 	g_is_transfer_complete = 1;
+	/* reset the byte index back to zero */
 	g_spi_byte_index = 0;
 }
 
@@ -35,10 +35,15 @@ volatile bool is_new_message() {
 	return g_is_transfer_complete;
 }
 
-void digest_message(char* dest) {
-	for (uint8_t i = 0; i < BYTES_IN_PACKET; i++) {
-		*(dest + i) = (char) g_spi_receive_data[i]; 
+void digest_message(Packet* dest) {
+	dest->first_byte = g_packet.first_byte;
+	for (uint8_t i = 0; i < (BYTES_IN_PACKET - 1) / 2 - 1; i++) {
+		dest->param1[i] = g_packet.param1[i];
+		dest->param2[i] = g_packet.param2[i];
 	}
+	dest->param1[(BYTES_IN_PACKET - 1) / 2 - 1] = '\0';
+	dest->param2[(BYTES_IN_PACKET - 1) / 2 - 1] = '\0';
+	/* Ready to receive a new packet */
 	g_is_transfer_complete = 0;
 }
 
@@ -49,15 +54,29 @@ ISR
 	if (g_spi_byte_index < BYTES_IN_PACKET && g_is_transfer_complete == 0) {
 		/* reading SPDR causes the Shift Register Receive buffer to be read */
 		unsigned char spi_receive_buffer = SPDR;
-		g_spi_receive_data[g_spi_byte_index] = spi_receive_buffer;
-		/* transmit a byte back as a response (writing to SPDR initiates data transmission) */
-		SPDR = g_spi_send_data[g_spi_byte_index];
+		/* determine where the read byte goes to */
+		if (g_spi_byte_index == 0) {
+			// First byte
+			g_packet.first_byte = spi_receive_buffer;
+		} else if (g_spi_byte_index >= 1 && g_spi_byte_index <= (BYTES_IN_PACKET - 1) / 2) {
+			// param 1
+			g_packet.param1[g_spi_byte_index - 1] = spi_receive_buffer;
+		} else {
+			// param 2
+			g_packet.param2[g_spi_byte_index - 1 - (BYTES_IN_PACKET - 1) / 2] = spi_receive_buffer;
+		}
+		/* transmit the same byte back as a response
+		 (writing to SPDR initiates data transmission) */
+		SPDR = spi_receive_buffer;
 		g_spi_byte_index++;
 		/* packet transfer complete when all bytes are transferred */
 		if (g_spi_byte_index == BYTES_IN_PACKET)
 		{
 			on_transfer_success();
 		}
+	} else {
+		// Not ready to receive, send negative acknowledge byte back
+		SPDR = NEG_ACK_BYTE;
 	}
 }
 

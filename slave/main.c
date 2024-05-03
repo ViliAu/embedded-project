@@ -14,13 +14,13 @@ volatile int state;
 int main(void) {
 	// enable global interrupts
 	sei();
-	char msg[BYTES_IN_PACKET];
+	Packet p;
 	setup_slave_spi();
 	
 	while (1) {
 		while (!is_new_message()){}
-		digest_message(msg);
-		write_lcd(msg, "testi");
+		digest_message(&p);
+		write_lcd(p.param1, p.param2);
 	}
 	
 	//setup_slave();
