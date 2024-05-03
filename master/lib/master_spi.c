@@ -28,9 +28,15 @@ void assemble_packet(uint8_t first_byte, char* param1, char* param2, Packet* pac
 	package->first_byte = first_byte;
 	for (uint8_t i = 0; i < (BYTES_IN_PACKET - 1) / 2; i++) {
 		package->param1[i] = (unsigned char) param1[i];
+		if (param1[i] == '\0') {
+			break;
+		}
 	}
 	for (uint8_t i = 0; i < (BYTES_IN_PACKET - 1) / 2; i++) {
 		package->param2[i] = (unsigned char) param2[i];
+		if (param2[i] == '\0') {
+			break;
+		}
 	}
 }  
 
