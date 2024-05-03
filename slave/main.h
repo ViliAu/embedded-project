@@ -15,18 +15,18 @@
 	#include <avr/interrupt.h>
 	#include <util/delay.h>
 	#include <stdlib.h>
-	#include <time.h>
+	#include <stdbool.h>
 	#include "./lib/util.h"
 	#include "./lib/buzzer.h"
 	#include "./lib/slave_spi.h"
 	
-	// Define states
-	#define AWAITING_CONNECTION 0
-	#define READY 1
-	#define ERROR -1
-	// -------------
+	#define INIT_STATE 0
+	#define OK_STATE 1
 	
-	extern void setup_slave();
-	//extern void loop_slave();
+	#define CHECK_CONN_BYTE 'c'
+	#define CHECK_CONN_TIMEOUT_SECONDS 10
+	
+	bool initialize();
+	bool check_connection();
 
 #endif /* MAIN_H_ */

@@ -7,72 +7,64 @@
 
 #include "main.h"
 
-#define CONN_POLL_TIME 10
+uint8_t g_state;
 
-volatile int state;
+bool check_connection() {
+	double seconds_waited = 0;
+	// loop until a new message is received from master or timeout reached
+	while (!is_new_message()) {
+		if (seconds_waited > CHECK_CONN_TIMEOUT_SECONDS) {
+			write_lcd("Connection\0", "Timed out\0");
+			return false;
+		}
+		seconds_waited += 0.005;
+		_delay_ms(5);
+	}
+	// check that the first packet is connection check
+	Packet p;
+	digest_message(&p);
+	if (p.first_byte == CHECK_CONN_BYTE) {
+		// connection ok
+		write_lcd("Connection\0", "Established\0");
+		return true;
+		} else {
+		// something went wrong
+		write_lcd("Unknown\0", "Error\0");
+	}
+	return false;
+}
+
+bool initialize() {
+	// enable global interrupts for the SPI communication
+	sei();
+	// setup the SPI communication
+	setup_slave_spi();
+	// wait for the connection check packet from master
+	write_lcd("Awaiting\0", "Connection\0");
+	return check_connection();
+}
 
 int main(void) {
-	// enable global interrupts
-	sei();
-	Packet p;
-	setup_slave_spi();
-	
-	while (1) {
-		while (!is_new_message()){}
-		digest_message(&p);
-		write_lcd(p.param1, p.param2);
-	}
-	
-	//setup_slave();
-//	loop_slave();
-	return 0;
-}
-
-void setup_slave() {
-	// initialize state
-	state = AWAITING_CONNECTION;
-	write_lcd("Awaiting", "Connection...");
-	_delay_ms(CONN_POLL_TIME * 1000);
-	if (state == AWAITING_CONNECTION) {
-		state = ERROR;
-		write_lcd("Connection", "timed out");
-	}
-	else {
-		state = READY;
-		write_lcd("OK", "");
-	}
-}
-
-/*void loop_slave() {
-	while (1) {
-		switch(state) {
-			case AWAITING_CONNECTION:
-				write_lcd("Awaiting", "Connection...");
-				break;
-			case ERROR:
-				break;
-			default:
-				state = ERROR;
-				break;
+	// set state to initializing
+	g_state = INIT_STATE;
+	// if initialization is ok continue, otherwise exit
+	if (initialize()) {
+		// set state to OK
+		g_state = OK_STATE;
+		Packet p;
+		while (1) {
+			while (!is_new_message()){}
+			digest_message(&p);
+			switch (p.first_byte) {
+				case 'p':
+					// print packet to screen
+					write_lcd(p.param1, p.param2);
+					break;
+				case 'a':
+					// play alarm on buzzer
+					break;
+			}
 		}
 	}
-}*/
-
-/*
-char c_char[2];
-int c = 10;
-while(1)
-{
-	_delay_ms(1000);
-	itoa(c, c_char, 10);
-	write_lcd("moi", c_char);
-	if (c > 0)
-	{
-		c--;
-	}
-	else {
-		//play_sound(1000);
-	}
+	return 0;
 }
-*/
-
