@@ -2,7 +2,7 @@
  * main.h
  *
  * Created: 7.4.2024 14.20.19
- *  Author: Vili
+ * Author: Vili Huusko, Jani Heinikoski, Konsta Keski-Mattinen
  */ 
 
 
