@@ -41,6 +41,9 @@ void assemble_packet(uint8_t first_byte, char* param1, char* param2, Packet* pac
 }  
 
 void packet_to_uchar_arr(Packet* src, unsigned char* dest) {
+	if (src == NULL || dest == NULL) {
+		return;
+	}
 	/* first byte represents the command (zeroth index byte) */
 	dest[0] = (unsigned char) src->first_byte;
 	/* copy the first parameter to indices 1-32 */

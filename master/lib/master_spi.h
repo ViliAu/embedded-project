@@ -13,6 +13,7 @@
 	#define F_CPU 16000000UL
 	#include <util/delay.h>
 	#include <stdbool.h>
+	#include <stddef.h>
 	
 	#define BYTES_IN_PACKET 65
 	/* See: https://www.ascii-code.com/ */
