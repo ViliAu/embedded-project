@@ -2,7 +2,7 @@
  * password_manager.c
  *
  * Created: 4.5.2024 13.19.51
- *  Author: Vili Huusko, Jani Heinikoski, Konsta Keski-Mattinen
+ * Author: Vili Huusko, Jani Heinikoski, Konsta Keski-Mattinen
  */ 
 
 #include "password_manager.h"

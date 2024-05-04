@@ -2,7 +2,7 @@
  * sensor.h
  *
  * Created: 25.4.2024 18.06.45
- *  Author: Vili
+ * Author: Vili Huusko, Jani Heinikoski, Konsta Keski-Mattinen
  */ 
 
 

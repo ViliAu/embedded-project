@@ -2,7 +2,7 @@
  * password_storage.c
  *
  * Created: 25.4.2024 19.47.05
- *  Author: Vili
+ * Author: Vili Huusko, Jani Heinikoski, Konsta Keski-Mattinen
  */ 
 
 // Wrapper for reading and writing to the EEPROM memory

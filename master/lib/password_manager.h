@@ -2,7 +2,7 @@
  * password_manager.h
  *
  * Created: 4.5.2024 15.38.42
- *  Author: Vili
+ * Author: Vili Huusko, Jani Heinikoski, Konsta Keski-Mattinen
  */ 
 
 
