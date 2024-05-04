@@ -17,6 +17,9 @@ int main(void) {
 }
 
 void setup_master() {
+	// Setup error pin
+	DDRD |= (1 << ERROR_PIN);
+	
 	init_connection();
 	KEYPAD_Init();
 	g_state = DISARMED;
@@ -59,8 +62,9 @@ void loop_master() {
 				break;
 			case ERROR:
 			default:
+				// set error led HIGH
+				ERROR_PORT |= (1 << ERROR_PIN);
 				break;
-				//error state
 		}
 	}
 }
@@ -127,21 +131,18 @@ void handle_triggered(char c) {
 			clear_buffer();
 			break;
 		default:
-		input_char(c);
+			input_char(c);
 	}
 	write_slave_lcd(msg, pswd_msg);
 }
 
 // Handles the SET_PSWD state
 void handle_set_pswd(char c) {
-	char msg[17] = "pswd: ";
-	strcat(msg, g_pswd_buffer);
-	msg[16] = '\0';
-	write_slave_lcd(msg, "A OK | C CANCEL\0");
 	switch(c) {
 		case 'A':
-			update_password();
-			g_state = DISARMED;
+			if (update_password()) {
+				g_state = DISARMED;	
+			}
 			break;
 		case 'C':
 			g_state = DISARMED;
@@ -149,25 +150,35 @@ void handle_set_pswd(char c) {
 		default:
 			input_char(c);
 	}
+	char msg[17] = "pswd: ";
+	strcat(msg, g_pswd_buffer);
+	msg[16] = '\0';
+	write_slave_lcd(msg, "A OK | C CANCEL\0");
 }
 
 void init_connection() {
 	Packet p;
 	assemble_packet('c', "\0", "\0", &p);
-	send_packet_to_slave(&p);
+	if (!send_packet_to_slave(&p)) {
+		g_state = ERROR;
+	}
 }
 
 void write_slave_lcd(char* l1, char* l2) {
 	Packet p;
 	assemble_packet('p', l1, l2, &p);
-	send_packet_to_slave(&p);
+	if (!send_packet_to_slave(&p)) {
+		g_state = ERROR;
+	}
 }
 
 void toggle_buzzer(int b) {
 	char cmd = b ? 'a' : 'd';
 	Packet p;
 	assemble_packet(cmd, '\0', '\0', &p);
-	send_packet_to_slave(&p);
+	if (!send_packet_to_slave(&p)) {
+		g_state = ERROR;
+	}
 }
 
 

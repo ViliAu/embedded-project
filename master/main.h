@@ -21,6 +21,9 @@
 	#include "lib/keypad.h"
 	#include "lib/password_manager.h"
 	
+	#define ERROR_PORT PORTD
+	#define ERROR_PIN 7
+	
 	// states
 	#define INITIALIZE 0
 	#define DISARMED 1

@@ -11,14 +11,16 @@
 
 	#include <string.h>
 	
-	#define PSWD_MAX_LEN 10
+	#define PSWD_MAX_LEN 9
+	#define PSWD_MIN_LEN 4
 	
 	char g_pswd_buffer[10];
 	
-	int check_password();
-	void update_password();
 	void add_char(char c);
-	int input_char(char c);
-	void clear_buffer();
+	
+	extern int check_password();
+	extern int update_password();
+	extern int input_char(char c);
+	extern void clear_buffer();
 
 #endif /* PASSWORD_MANAGER_H_ */
