@@ -168,6 +168,12 @@
     <Compile Include="lib\master_spi.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="lib\password_manager.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lib\password_manager.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="lib\password_storage.c">
       <SubType>compile</SubType>
     </Compile>

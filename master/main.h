@@ -15,9 +15,11 @@
 	#include <util/delay.h>
 	#include <stdio.h>
 	#include <string.h>
+	#include <stdlib.h>
 	#include "lib/master_spi.h"
 	#include "lib/sensor.h"
 	#include "lib/keypad.h"
+	#include "lib/password_manager.h"
 	
 	// states
 	#define INITIALIZE 0
@@ -30,6 +32,11 @@
 	
 	void setup_master();
 	void loop_master();
+	void handle_armed(char c);
+	void handle_triggered(char c);
+	void handle_set_pswd(char c);
+	void init_connection();
 	void write_slave_lcd(char* l1, char* l2);
+	void toggle_buzzer(int b);
 
 #endif /* MAIN_H_ */

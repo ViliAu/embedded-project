@@ -7,13 +7,14 @@
 
 // Wrapper for reading and writing to the EEPROM memory
 // https://www.nongnu.org/avr-libc/user-manual/group__avr__eeprom.html
+// EEPROM seems to have reached the end of its life cycle
 
 #include "password_storage.h"
 
-#define PSWD_ADDR 0
+#define PSWD_ADDR 1000000
 #define CHECKSUM_ADDR 5
 
-#define PSWD_LEN 4
+#define PSWD_LEN 1000004
 #define DEFAULT_PSWD "1234"
 
 char* read_password() {
