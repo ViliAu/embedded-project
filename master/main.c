@@ -43,7 +43,7 @@ void loop_master() {
 			case DISARMED:
 				toggle_buzzer(0);
 				clear_buffer();
-				write_slave_lcd("A - ARM\0", "C - CHANGE PSWD\0");
+				write_slave_lcd("A - ARM", "C - CHANGE PSWD");
 				if (c == 'A') {
 					g_state = ARMED;
 				}
@@ -69,22 +69,7 @@ void loop_master() {
 	}
 }
 
-// Handles the armed state
-void handle_armed(char c) {
-	// Check for motion
-	if (check_motion()) {
-		g_state = TRIGGERED;
-		// Set alarm countdown iterations to 0
-		g_countdown = 0;
-		// Clear password buffer
-		clear_buffer();
-		return;
-	}
-	
-	
-	char pswd_msg[17] = " ";
-	strcpy(pswd_msg, g_pswd_buffer);
-	pswd_msg[16] = '\0';
+void try_pswd(char c) {
 	switch(c) {
 		case 'A':
 			if (check_password()) {
@@ -98,7 +83,21 @@ void handle_armed(char c) {
 		default:
 			input_char(c);
 	}
-	write_slave_lcd("ARMED!", pswd_msg);
+}
+
+// Handles the armed state
+void handle_armed(char c) {
+	// Check for motion
+	if (check_motion()) {
+		g_state = TRIGGERED;
+		// Set alarm countdown iterations to 0
+		g_countdown = 0;
+		// Clear password buffer
+		clear_buffer();
+		return;
+	}
+	try_pswd(c);
+	write_slave_lcd("ARMED!", g_pswd_buffer);
 }
 
 // Handles triggered state
@@ -113,27 +112,11 @@ void handle_triggered(char c) {
 	char s_left[3];
 	int seconds_left = 10 - g_countdown / 10;
 	itoa(seconds_left, s_left, 10);
-	char msg[17] = "Countdown: ";
+	char msg[16] = "Countdown: ";
 	strcat(msg, s_left);
-	msg[16] = '\0';
 	
-	char pswd_msg[17] = " ";
-	strcpy(pswd_msg, g_pswd_buffer);
-	pswd_msg[16] = '\0';
-	switch(c) {
-		case 'A':
-			if (check_password()) {
-				g_state = DISARMED;
-			}
-			else {
-				toggle_buzzer(1);
-			}
-			clear_buffer();
-			break;
-		default:
-			input_char(c);
-	}
-	write_slave_lcd(msg, pswd_msg);
+	try_pswd(c);
+	write_slave_lcd(msg, g_pswd_buffer);
 }
 
 // Handles the SET_PSWD state
@@ -152,8 +135,7 @@ void handle_set_pswd(char c) {
 	}
 	char msg[17] = "pswd: ";
 	strcat(msg, g_pswd_buffer);
-	msg[16] = '\0';
-	write_slave_lcd(msg, "A OK | C CANCEL\0");
+	write_slave_lcd(msg, "A OK | C CANCEL");
 }
 
 void init_connection() {
@@ -164,10 +146,23 @@ void init_connection() {
 	}
 }
 
+// Adds a \0 to the end of parameters and sends the msg to slave
 void write_slave_lcd(char* l1, char* l2) {
+	char* l1_terminated = (char*)malloc(strlen(l1)+1);
+	char* l2_terminated = (char*)malloc(strlen(l2)+1);
+	if (l1_terminated == NULL || l2_terminated == NULL) {
+		g_state = ERROR;
+	}
+	strcpy(l1_terminated, l1);
+	l1_terminated[strlen(l1)] = '\0';
+	strcpy(l2_terminated, l2);
+	l1_terminated[strlen(l2)] = '\0';
+	
 	Packet p;
 	assemble_packet('p', l1, l2, &p);
 	if (!send_packet_to_slave(&p)) {
+		free(l1_terminated);
+		free(l2_terminated);
 		g_state = ERROR;
 	}
 }

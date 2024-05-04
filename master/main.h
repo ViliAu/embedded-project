@@ -35,6 +35,7 @@
 	
 	void setup_master();
 	void loop_master();
+	void try_pswd(char c);
 	void handle_armed(char c);
 	void handle_triggered(char c);
 	void handle_set_pswd(char c);
