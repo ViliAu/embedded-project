@@ -2,20 +2,19 @@
  * buzzer.h
  *
  * Created: 7.4.2024 13.26.39
- *  Author: Vili
+ * Authors : Vili Huusko, Jani Heinikoski, Konsta Keski-Mattinen
  */ 
 
 
 #ifndef BUZZER_H_
 #define BUZZER_H_
 	
-	#define __DELAY_BACKWARD_COMPATIBLE__ // Allows for variable sound play duration
-	#define F_CPU 16000000UL
-	
 	#include <avr/io.h>
-	#include <util/delay.h>
+	#include <avr/interrupt.h>
 	
-	extern void setup_buzzer();
-	extern void play_sound(double duration);
+	void setup_buzzer();
+	
+	extern void enable_buzzer();
+	extern void disable_buzzer();
 
 #endif /* BUZZER_H_ */

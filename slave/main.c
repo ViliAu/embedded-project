@@ -7,63 +7,53 @@
 
 #include "main.h"
 
-uint8_t g_state;
+static uint8_t g_buzzer_state = 0;
 
-bool check_connection() {
-	double seconds_waited = 0;
-	// loop until a new message is received from master or timeout reached
+void sleep_until_new_msg() {
+	// disable interrupts to prevent race conditions
+	cli();
+	// loop while no new message from master
 	while (!is_new_message()) {
-		if (seconds_waited > CHECK_CONN_TIMEOUT_SECONDS) {
-			write_lcd("Connection\0", "Timed out\0");
-			return false;
-		}
-		seconds_waited += 0.005;
-		_delay_ms(5);
+		// enter sleep mode, interrupts will wake the device up
+		sleep_enable();
+		sei();
+		sleep_cpu();
+		sleep_disable();
 	}
-	// check that the first packet is connection check
-	Packet p;
-	digest_message(&p);
-	if (p.first_byte == CHECK_CONN_BYTE) {
-		// connection ok
-		write_lcd("Connection\0", "Established\0");
-		return true;
-		} else {
-		// something went wrong
-		write_lcd("Unknown\0", "Error\0");
-	}
-	return false;
-}
-
-bool initialize() {
-	// enable global interrupts for the SPI communication
+	// enable global interrupts
 	sei();
-	// setup the SPI communication
-	setup_slave_spi();
-	// wait for the connection check packet from master
-	write_lcd("Awaiting\0", "Connection\0");
-	return check_connection();
 }
 
 int main(void) {
-	// set state to initializing
-	g_state = INIT_STATE;
-	// if initialization is ok continue, otherwise exit
-	if (initialize()) {
-		// set state to OK
-		g_state = OK_STATE;
-		Packet p;
-		while (1) {
-			while (!is_new_message()){}
-			digest_message(&p);
-			switch (p.first_byte) {
-				case 'p':
-					// print packet to screen
-					write_lcd(p.param1, p.param2);
-					break;
-				case 'a':
-					// play alarm on buzzer
-					break;
-			}
+	Packet p;
+	// enable global interrupts
+	sei();
+	// set the sleep mode to IDLE
+	set_sleep_mode(SLEEP_MODE_IDLE);
+	// setup the SPI communication
+	setup_slave_spi();
+	while (1) {
+		sleep_until_new_msg();
+		digest_message(&p);
+		switch (p.first_byte) {
+			case 'p':
+				// print packet to screen
+				write_lcd(p.param1, p.param2);
+				break;
+			case 'a':
+				// play alarm on buzzer
+				if (g_buzzer_state == 0) {
+					enable_buzzer();
+					g_buzzer_state = 1;	
+				}
+				break;
+			case 'd':
+				// disable alarm
+				if (g_buzzer_state == 1) {
+					disable_buzzer();
+					g_buzzer_state = 0;
+				}
+				break;
 		}
 	}
 	return 0;

@@ -8,11 +8,11 @@
  */ 
 #include "slave_spi.h"
 
-int g_setup = 0;
+static int g_setup = 0;
 
-volatile bool g_is_transfer_complete = 0;
-volatile uint8_t g_spi_byte_index = 0;
-volatile Packet g_packet;
+static volatile bool g_is_transfer_complete = 0;
+static volatile uint8_t g_spi_byte_index = 0;
+static volatile Packet g_packet;
 
 void setup_slave_spi() {
 	if (g_setup == 0) {
@@ -36,13 +36,15 @@ volatile bool is_new_message() {
 }
 
 void digest_message(Packet* dest) {
-	dest->first_byte = g_packet.first_byte;
-	for (uint8_t i = 0; i < (BYTES_IN_PACKET - 1) / 2 - 1; i++) {
-		dest->param1[i] = g_packet.param1[i];
-		dest->param2[i] = g_packet.param2[i];
+	if (dest != NULL) {
+		dest->first_byte = g_packet.first_byte;
+		for (uint8_t i = 0; i < (BYTES_IN_PACKET - 1) / 2 - 1; i++) {
+			dest->param1[i] = g_packet.param1[i];
+			dest->param2[i] = g_packet.param2[i];
+		}
+		dest->param1[(BYTES_IN_PACKET - 1) / 2 - 1] = '\0';
+		dest->param2[(BYTES_IN_PACKET - 1) / 2 - 1] = '\0';
 	}
-	dest->param1[(BYTES_IN_PACKET - 1) / 2 - 1] = '\0';
-	dest->param2[(BYTES_IN_PACKET - 1) / 2 - 1] = '\0';
 	/* Ready to receive a new packet */
 	g_is_transfer_complete = 0;
 }

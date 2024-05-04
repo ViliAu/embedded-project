@@ -11,6 +11,7 @@
 	
 	#include <avr/io.h>
 	#include <avr/interrupt.h>
+	#include <stddef.h>
 	#include <stdbool.h>
 	#include <string.h>
 	#include "util.h"
