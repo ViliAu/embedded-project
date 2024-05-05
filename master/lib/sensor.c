@@ -30,6 +30,7 @@ void setup() {
 	}
 }
 
+// Set a pin to HIGH or low in SENSOR_PORT
 void set_pin(int pin, int state) {
 	if (state == 1) {
 		SENSOR_PORT |= (1 << pin);
@@ -39,16 +40,20 @@ void set_pin(int pin, int state) {
 	}
 }
 
+// Read data from port L
 int read_pin_digital(int pin) {
-	return (PINL & (1 << pin)) == (1 << pin) ;
+	return (PINL & (1 << pin)) == (1 << pin);
 }
 
+// Send activation pulse to the sensor
+// Starts soundwave transmission
 void transmit() {
 	set_pin(TRIG_PIN, HIGH);
 	_delay_us(10);
 	set_pin(TRIG_PIN, LOW);
 }
 
+// Returns ultrasonic sensor distance reading in cm
 int get_reading() {
 	setup();
 	int loops = 0;
@@ -68,11 +73,12 @@ int get_reading() {
 	return distance;
 }
 
-void set_base_distance() {
+// Sets base distance 
+extern void set_base_distance() {
 	base_distance = get_reading();
 }
 
-int check_motion() {
+extern int check_motion() {
 	const int dist = get_reading();
-	return (dist < base_distance - TOLERANCE / 2 || dist > base_distance + TOLERANCE / 2);
+	return (dist < base_distance - TOLERANCE || dist > base_distance + TOLERANCE);
 }

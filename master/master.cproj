@@ -174,12 +174,6 @@
     <Compile Include="lib\password_manager.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="lib\password_storage.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="lib\password_storage.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="lib\sensor.c">
       <SubType>compile</SubType>
     </Compile>

@@ -7,7 +7,7 @@
 
 #include "main.h"
 
-volatile static int g_state = DISARMED;
+volatile static int g_state = INITIALIZE;
 
 static int g_countdown = 0;
 
@@ -16,11 +16,13 @@ int main(void) {
 	loop_master();
 }
 
-void setup_master() {
+void setup_master() {	
 	// Setup error pin
 	DDRD |= (1 << ERROR_PIN);
 	
+	// Check connection to slave
 	init_connection();
+	
 	KEYPAD_Init();
 	g_state = DISARMED;
 }
@@ -41,21 +43,17 @@ void loop_master() {
 		}
 		switch(g_state) {
 			case DISARMED:
-				toggle_buzzer(0);
-				clear_buffer();
-				write_slave_lcd("A - ARM", "C - CHANGE PSWD");
-				if (c == 'A') {
-					g_state = ARMED;
-				}
-				else if (c == 'C') {
-					g_state = SET_PSWD;
-				}
+				handle_disarmed(c);
 				break;
 			case ARMED:
 				handle_armed(c);
 				break;
 			case TRIGGERED:
 				handle_triggered(c);
+				break;
+			case ALARM_PASSWORD:
+			case ALARM_COUNTDOWN:
+				handle_alarm(c);
 				break;
 			case SET_PSWD:
 				handle_set_pswd(c);
@@ -69,6 +67,7 @@ void loop_master() {
 	}
 }
 
+// Handles the situation when the user tries to input the correct password
 void try_pswd(char c) {
 	switch(c) {
 		case 'A':
@@ -76,12 +75,27 @@ void try_pswd(char c) {
 				g_state = DISARMED;
 			}
 			else {
-				toggle_buzzer(1);
+				g_state = ALARM_PASSWORD;
 			}
 			clear_buffer();
 			break;
 		default:
 			input_char(c);
+	}
+}
+
+// Handles disarmed state
+void handle_disarmed(char c) {
+	toggle_buzzer(0);
+	clear_buffer();
+	write_slave_lcd("A - ARM", "C - CHANGE PSWD");
+	if (c == 'A') {
+		set_base_distance();
+		
+		g_state = ARMED;
+	}
+	else if (c == 'C') {
+		g_state = SET_PSWD;
 	}
 }
 
@@ -102,10 +116,10 @@ void handle_armed(char c) {
 
 // Handles triggered state
 void handle_triggered(char c) {
-	// Check if 10s has passed
+	// Check if 10s has passed. If true, sound alarm
 	if (g_countdown >= 100) {
 		g_countdown = 100;
-		toggle_buzzer(1);
+		g_state = ALARM_COUNTDOWN;
 	}
 	g_countdown++;
 	
@@ -115,6 +129,15 @@ void handle_triggered(char c) {
 	char msg[16] = "Countdown: ";
 	strcat(msg, s_left);
 	
+	try_pswd(c);
+	write_slave_lcd(msg, g_pswd_buffer);
+}
+
+// Handles both alarm states
+void handle_alarm(char c) {
+	toggle_buzzer(1);
+	// Define alarm message based off of state
+	char* msg = g_state == ALARM_PASSWORD ? "Wrong password!" : g_state == ALARM_COUNTDOWN ? "Time ran out!" : "ERROR";
 	try_pswd(c);
 	write_slave_lcd(msg, g_pswd_buffer);
 }
@@ -138,6 +161,7 @@ void handle_set_pswd(char c) {
 	write_slave_lcd(msg, "A OK | C CANCEL");
 }
 
+// Send connection initialization packet to slave
 void init_connection() {
 	Packet p;
 	assemble_packet('c', "\0", "\0", &p);
@@ -161,12 +185,13 @@ void write_slave_lcd(char* l1, char* l2) {
 	Packet p;
 	assemble_packet('p', l1, l2, &p);
 	if (!send_packet_to_slave(&p)) {
-		free(l1_terminated);
-		free(l2_terminated);
 		g_state = ERROR;
 	}
+	free(l1_terminated);
+	free(l2_terminated);
 }
 
+// Send cmd to slave to turn buzzer on or off
 void toggle_buzzer(int b) {
 	char cmd = b ? 'a' : 'd';
 	Packet p;

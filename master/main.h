@@ -29,15 +29,19 @@
 	#define DISARMED 1
 	#define ARMED 2
 	#define TRIGGERED 3
-	#define SET_PSWD 4
+	#define ALARM_PASSWORD 4
+	#define ALARM_COUNTDOWN 5
+	#define SET_PSWD 6
 	#define ERROR -1
 	// -----
 	
 	void setup_master();
 	void loop_master();
 	void try_pswd(char c);
+	void handle_disarmed(char c);
 	void handle_armed(char c);
 	void handle_triggered(char c);
+	void handle_alarm(char c);
 	void handle_set_pswd(char c);
 	void init_connection();
 	void write_slave_lcd(char* l1, char* l2);

@@ -19,7 +19,7 @@
 	int read_pin_digital(int pin);
 	void transmit();
 	int get_reading();
-	void set_base_distance();
-	int check_motion();
+	extern void set_base_distance();
+	extern int check_motion();
 
 #endif /* SENSOR_H_ */
