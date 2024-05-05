@@ -10,6 +10,7 @@
 #define PASSWORD_MANAGER_H_
 
 	#include <string.h>
+	#include <stdbool.h>
 	
 	#define PSWD_MAX_LEN 9
 	#define PSWD_MIN_LEN 4
@@ -18,9 +19,9 @@
 	
 	void add_char(char c);
 	
-	extern int check_password();
-	extern int update_password();
-	extern int input_char(char c);
+	extern bool check_password();
+	extern bool update_password();
+	extern void input_char(char c);
 	extern void clear_buffer();
 
 #endif /* PASSWORD_MANAGER_H_ */

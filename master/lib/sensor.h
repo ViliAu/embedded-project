@@ -13,6 +13,7 @@
 		
 	#include <avr/io.h>
 	#include <util/delay.h>
+	#include <stdbool.h>
 	
 	void setup();
 	void set_pin(int pin, int state);
@@ -20,6 +21,6 @@
 	void transmit();
 	int get_reading();
 	extern void set_base_distance();
-	extern int check_motion();
+	extern bool check_motion();
 
 #endif /* SENSOR_H_ */

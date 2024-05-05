@@ -14,14 +14,14 @@ int g_pswd_iterator = 0;
 int g_ready_for_new_pswd = 1;
 
 // Used to check if password buffer equals stored password.
-// Return 0 or 1 whether the passwords match.
-extern int check_password() {
+// Return false or true whether the passwords match.
+extern bool check_password() {
 	return strcmp(g_pswd_buffer, g_pswd) == 0;
 }
 
 // Stores the buffered new password.
-// Returns 0 or 1 depending if the action was successful
-extern int update_password() {
+// Returns false or true depending if the action was successful
+extern bool update_password() {
 	if (strlen(g_pswd_buffer) < PSWD_MIN_LEN) {
 		return 0;
 	}
@@ -53,8 +53,8 @@ void add_char(char c) {
 	}
 }
 
-// Adds a character to the password buffer, returns 0 if char not added and 1 if char was added
-extern int input_char(char c) {
+// Adds a character to the password buffer
+extern void input_char(char c) {
 	switch(c) {
 		// error
 		case 'z':
@@ -63,10 +63,8 @@ extern int input_char(char c) {
 		case 'B':
 		case 'C':
 		case 'D':
-			return 0;
 			break;
 		default:
 			add_char(c);
 	}
-	return 1;
 }

@@ -81,7 +81,8 @@ extern void set_base_distance() {
 	base_distance = get_reading();
 }
 
-extern int check_motion() {
+// Returns true / false depending on if distance delta is greater than tolerance
+extern bool check_motion() {
 	const int dist = get_reading();
 	return (dist < base_distance - TOLERANCE || dist > base_distance + TOLERANCE);
 }

@@ -16,6 +16,7 @@
 	#include <stdio.h>
 	#include <string.h>
 	#include <stdlib.h>
+	#include <stdbool.h>
 	#include "lib/master_spi.h"
 	#include "lib/sensor.h"
 	#include "lib/keypad.h"
