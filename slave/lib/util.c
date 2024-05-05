@@ -4,12 +4,9 @@
  * Created: 6.4.2024 16.33.17
  *  Author: Vili huusko, Jani Heinikoski, Konsta Keski-Mattinen
  */ 
-#include <string.h>
-
-#include "lcd.h"
 #include "util.h"
 
-static int g_initialized = 0;
+static int g_initialized = false;
 
 static char g_c_l1[16];
 static char g_c_l2[16];
@@ -17,7 +14,7 @@ static char g_c_l2[16];
 void initialize_lcd() {
 	if (!g_initialized) {
 		lcd_init(LCD_DISP_ON);
-		g_initialized = 1;
+		g_initialized = true;
 	}
 }
 

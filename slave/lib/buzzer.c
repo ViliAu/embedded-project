@@ -8,7 +8,7 @@
 
 #include "buzzer.h"
 
-static int g_setup = 0;
+static bool g_setup = false;
 
 /* functions for the timer/counter1 compare match A interrupt vector */
 ISR
@@ -19,7 +19,7 @@ ISR
 
 // Course exercise 7 code used
 void setup_buzzer() {
-	if (g_setup == 0) {
+	if (g_setup == false) {
 		// disable global interrupts while writing to the registers (specifically TCNT1)
 		// (see ATmega datasheet p. 114)
 		cli();
@@ -38,7 +38,7 @@ void setup_buzzer() {
 		OCR1A = 15297; // C5 523 Hz, no prescaler
 		// enable global interrupts
 		sei();
-		g_setup = 1;
+		g_setup = true;
 	}
 }
 

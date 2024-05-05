@@ -9,6 +9,10 @@
 #ifndef UTIL_H_
 #define UTIL_H_
 	
+	#include <string.h>
+	#include <stdbool.h>
+	#include "lcd.h"
+	
 	extern void initialize_lcd();
 	extern void write_lcd(char* l1, char* l2);
 

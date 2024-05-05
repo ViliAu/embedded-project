@@ -7,7 +7,7 @@
 
 #include "main.h"
 
-static uint8_t g_buzzer_state = 0;
+static bool g_buzzer_state = false;
 
 void sleep_until_new_msg() {
 	// disable interrupts to prevent race conditions
@@ -42,16 +42,16 @@ int main(void) {
 				break;
 			case 'a':
 				// play alarm on buzzer
-				if (g_buzzer_state == 0) {
+				if (g_buzzer_state == false) {
 					enable_buzzer();
-					g_buzzer_state = 1;	
+					g_buzzer_state = true;	
 				}
 				break;
 			case 'd':
 				// disable alarm
-				if (g_buzzer_state == 1) {
+				if (g_buzzer_state == true) {
 					disable_buzzer();
-					g_buzzer_state = 0;
+					g_buzzer_state = false;
 				}
 				break;
 		}
