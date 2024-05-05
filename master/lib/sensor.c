@@ -57,14 +57,17 @@ void transmit() {
 int get_reading() {
 	setup();
 	int loops = 0;
-	// Wait for previous pulse
-	while (read_pin_digital(ECHO_PIN) == 1) {};
+
+	while (read_pin_digital(ECHO_PIN) == 1) {
+		// Wait for previous pulse
+	}
 	
 	int distance = 0;
 	transmit();
 	
-	// Wait for the echo pin to become HIGH
-	while (read_pin_digital(ECHO_PIN) == 0){};
+	while (read_pin_digital(ECHO_PIN) == 0){
+		// Wait for the echo pin to become HIGH
+	}
 	while (read_pin_digital(ECHO_PIN) == 1) {
 		loops++;
 	}

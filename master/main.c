@@ -32,8 +32,10 @@ void loop_master() {
 	char c;
 	while(1) {
 		_delay_ms(100);
+		// Get user input. keypad_counter used to delay key presses
 		if (keypad_counter == 5) {
-			if ((c = KEYPAD_GetKey()) != 'z') {
+			c = KEYPAD_GetKey();
+			if (c != 'z') {
 				keypad_counter = 0;
 			}
 		}
@@ -41,6 +43,8 @@ void loop_master() {
 			keypad_counter++;
 			c = 'z';
 		}
+		
+		// State machine
 		switch(g_state) {
 			case DISARMED:
 				handle_disarmed(c);
@@ -51,6 +55,7 @@ void loop_master() {
 			case TRIGGERED:
 				handle_triggered(c);
 				break;
+			// Both alarm states handled by the same function
 			case ALARM_PASSWORD:
 			case ALARM_COUNTDOWN:
 				handle_alarm(c);
@@ -58,6 +63,7 @@ void loop_master() {
 			case SET_PSWD:
 				handle_set_pswd(c);
 				break;
+			// Both cases are erroneous
 			case ERROR:
 			default:
 				// set error led HIGH
@@ -137,7 +143,8 @@ void handle_triggered(char c) {
 void handle_alarm(char c) {
 	toggle_buzzer(1);
 	// Define alarm message based off of state
-	char* msg = g_state == ALARM_PASSWORD ? "Wrong password!" : g_state == ALARM_COUNTDOWN ? "Time ran out!" : "ERROR";
+	char* msg = g_state == ALARM_PASSWORD ? "Wrong password!" : 
+		g_state == ALARM_COUNTDOWN ? "Time ran out!" : "ERROR";
 	try_pswd(c);
 	write_slave_lcd(msg, g_pswd_buffer);
 }
